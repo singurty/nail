@@ -1,21 +1,27 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/url"
 
 	"github.com/gocolly/colly/v2"
 )
 
 func main() {
+	root, err := url.Parse("https://geohot.github.io/blog/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	c := colly.NewCollector(
 		colly.CacheDir("./.cache"),
+		colly.AllowedDomains(root.Host),
 	)
 
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		fmt.Printf("scraping %s\n", link)
-		e.Request.Visit(link)
+		log.Printf("scraping %s\n", link)
 	})
 
-	c.Visit("https://geohot.github.io/blog/")
+	c.Visit(root.String())
 }
