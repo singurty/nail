@@ -22,10 +22,9 @@ func Register(username, password string) error {
 
 func Login(username, password string) (int, error) {
 	var id int
-	var twoFactor bool
 	userRow := db.DBpool.QueryRow(context.Background(), "SELECT id, password FROM USERS WHERE username = $1;", username)
 	var passCrypt string
-	err := userRow.Scan(&id, &passCrypt, &twoFactor)
+	err := userRow.Scan(&id, &passCrypt)
 	if err != nil {
 		return 0, err
 	}

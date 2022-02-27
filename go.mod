@@ -3,7 +3,6 @@ module github.com/singurty/nail
 go 1.17
 
 require (
-	github.com/ProtonMail/gopenpgp/v2 v2.4.3
 	github.com/alexedwards/scs/pgxstore v0.0.0-20220216073957-c252878bcf5a
 	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/gin-gonic/gin v1.7.7
@@ -14,8 +13,6 @@ require (
 )
 
 require (
-	github.com/ProtonMail/go-crypto v0.0.0-20220113124808-70ae35bab23f // indirect
-	github.com/ProtonMail/go-mime v0.0.0-20190923161245-9b5a4261663a // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect

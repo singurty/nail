@@ -8,11 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	pgp "github.com/ProtonMail/gopenpgp/v2/crypto"
 
 	"github.com/singurty/nail/user"
-	"github.com/singurty/nail/db"
-	"github.com/singurty/nail/frontend"
 )
 
 func loginHandler(c *gin.Context) {
@@ -38,72 +35,24 @@ func loginHandler(c *gin.Context) {
 		c.String(http.StatusOK, "Password should not be empty")
 		return
 	}
-	id, twoFactor, err := user.Login(username, password)
+	id, err := user.Login(username, password)
 	if err != nil {
 		c.String(http.StatusOK, "Username or password incorrect")
+		log.Error(err)
 		return
 	}
 
 	// Add login to session
 	sessionManager.Put(ctx, "user_id", id)
-	
-	// Two-factor authentication
-	if twoFactor {
-		pgpKeyRow := db.DBpool.QueryRow(context.Background(), "SELECT pgp_key FROM users WHERE id = $1;", id)
-		var pgpKeyString string
-		err := pgpKeyRow.Scan(&pgpKeyString)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occurred while processing two-factor authentication")
-			return
-		}
-		otp := generateOtp()
-		pgpKey, err := pgp.NewKeyFromArmored(pgpKeyString)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occurred while processing two-factor authentication")
-			return
-		}
-		pgpKeyRing, err := pgp.NewKeyRing(pgpKey)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occurred while processing two-factor authentication")
-			return
-		}
-		pgpMessage, err := pgpKeyRing.Encrypt(pgp.NewPlainMessage([]byte(otp)), nil)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occurred while processing two-factor authentication")
-			return
-		}
-		pgpArmored, err := pgpMessage.GetArmored()
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occurred while processing two-factor authentication")
-			return
-		}
-		message := frontend.TwoFactorPage{Message:pgpArmored}
-		c.HTML(http.StatusOK, "twofactor.html", message)
-
-		sessionManager.Put(ctx, "authorized", false)
-		sessionToken, _, err := sessionManager.Commit(ctx)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occured")
-			return
-		}
-		sessionManager.WriteSessionCookie(ctx, c.Writer, sessionToken, time.Now())
-	} else {
-		sessionManager.Put(ctx, "authorized", true)
-		sessionToken, _, err := sessionManager.Commit(ctx)
-		if err != nil {
-			log.Error(err)
-			c.String(http.StatusInternalServerError, "An error occured")
-			return
-		}
-		sessionManager.WriteSessionCookie(ctx, c.Writer, sessionToken, time.Now())
-		c.Redirect(http.StatusSeeOther, "/")
+	sessionManager.Put(ctx, "authorized", true)
+	sessionToken, _, err := sessionManager.Commit(ctx)
+	if err != nil {
+		log.Error(err)
+		c.String(http.StatusInternalServerError, "An error occured")
+		return
 	}
+	sessionManager.WriteSessionCookie(ctx, c.Writer, sessionToken, time.Now())
+	c.Redirect(http.StatusSeeOther, "/")
 }
 
 func generateOtp() string {
