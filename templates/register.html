@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+<style>
+textarea {
+	vertical-align: top;
+	resize: none;
+}
+</style>
+	<head>
+		<title>Register on nail</title>
+	</head>
+	
+	<body>
+		<h1>Register on nail</h1>
+		<form action="/register" method="post">
+			<label for="username">Username:</label>
+			<input type="text" name="username" required><br>
+	
+			<label for="password">Password:</label>
+			<input type="password" name="password" required><br>
+
+			<label for="pgp_key">PGP Key (optional):</label>
+			<textarea name="pgp_key" rows="30" cols="50"></textarea><br>
+
+			<input type="checkbox" name="two_factor" value="true">
+			<label for="two_factor">Enable two-factor authentication (you will be required to decrypt a text with you PGP key)</label><br>
+	
+			<br>
+			<button type="submit">Register</button>
+		</form>
+	</body>
+</html>

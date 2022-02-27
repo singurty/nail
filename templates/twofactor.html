@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Two-factor authentication</title>
+	</head>
+
+	<body>
+		<h1>Verify two-factor authentication</h1>
+		<h3>Decrypt the following text usng your PGP key:</h3>
+		<span style="white-space: pre-line">
+			{{.Message}}
+		</span>
+		<br>
+
+		<form action="/twofactor" method="post">
+			<label for="code">Decrypted text:</label>
+			<input type="text" name="code" required><br>
+			<br>
+	
+			<button type="submit">Submit</button>
+		</form>
+</html>
