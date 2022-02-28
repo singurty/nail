@@ -31,6 +31,8 @@ func postHandler(c *gin.Context) {
 		if err != nil {
 			log.Error(err)
 			c.String(http.StatusInternalServerError, "Could not create post.")
+		} else {
+			c.String(http.StatusOK, "Post created successfully.")
 		}
 	}
 }

@@ -3,9 +3,7 @@ package posts
 import (
 	"context"
 	
-	"github.com/jackc/pgconn"
 	"github.com/singurty/nail/db"
-	log "github.com/sirupsen/logrus"
 )
 
 func Create(title, body string, author int) error {
