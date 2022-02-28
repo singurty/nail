@@ -27,17 +27,17 @@ func loginHandler(c *gin.Context) {
 
 	username, result := c.GetPostForm("username")
 	if !result || username == "" {
-		c.String(http.StatusOK, "Username should not be empty")
+		c.String(http.StatusBadRequest, "Username should not be empty")
 		return
 	}
 	password, result := c.GetPostForm("password")
 	if !result || password == "" {
-		c.String(http.StatusOK, "Password should not be empty")
+		c.String(http.StatusBadRequest, "Password should not be empty")
 		return
 	}
 	id, err := user.Login(username, password)
 	if err != nil {
-		c.String(http.StatusOK, "Username or password incorrect")
+		c.String(http.StatusBadRequest, "Username or password incorrect")
 		log.Error(err)
 		return
 	}

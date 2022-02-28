@@ -34,6 +34,11 @@ func Start() error {
 
 	r.POST("/register", registerHandler)
 	r.GET("/register", registerHandler)
+
+	r.POST("/post", postHandler)
+	r.GET("/create_post", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "create_post.html", nil)
+	})
 	
 	// Get port from env if present otherwise set to 8080
 	port := os.Getenv("PORT")
